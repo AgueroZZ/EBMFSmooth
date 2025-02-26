@@ -1,7 +1,7 @@
 Package: EBMFSmooth
 Type: Package
 Title: Empirical Bayes Smoothing Through Various Priors
-Version: 0.1.1
+Version: 0.1.2
 Authors: Ziang Zhang
 Maintainer: <ziangzhang@uchicago.edu>
 Description: R package that creates an Empirical Bayes Smoother, using L-GP or Matérn Process. The smoother could be passed in as an input to flashier to solve EBMF problem.
@@ -21,7 +21,9 @@ Imports: TMB (>= 1.9.7),
     LaplacesDemon,
     methods
 Depends: 
-    R (>= 3.6.0)
+    R (>= 3.6.0),
+    INLA,
+    BayesGP (>= 0.1.3)
 Suggests: 
     knitr,
     rmarkdown
