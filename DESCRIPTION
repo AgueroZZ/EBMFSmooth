@@ -21,9 +21,7 @@ Imports: TMB (>= 1.9.7),
     LaplacesDemon,
     methods
 Depends: 
-    R (>= 3.6.0),
-    INLA,
-    BayesGP (>= 0.1.3)
+    R (>= 3.6.0)
 Suggests: 
     knitr,
     rmarkdown
