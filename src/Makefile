@@ -1,47 +1,25 @@
-# Compile all shared objects for TMB models
-all: fit_theta.so opt_theta.so fit_theta_beta.so opt_theta_beta.so opt_beta.so fit_theta_nn.so opt_theta_nn.so fit_theta_beta_nn.so opt_theta_beta_nn.so opt_beta_nn.so
+# Detect OS and set correct shared library extension
+UNAME := $(shell uname -s)
 
-# Compile fit_theta.cpp into fit_theta.so
-fit_theta.so: fit_theta.cpp
-	Rscript --vanilla -e "TMB::compile('fit_theta.cpp', '-O0 -g')"
+ifeq ($(UNAME), Darwin)  # macOS
+  EXT = so
+else ifeq ($(UNAME), Linux)
+  EXT = so
+else  # Assume Windows (MSYS or Cygwin)
+  EXT = dll
+endif
 
-# Compile opt_theta.cpp into opt_theta.so
-opt_theta.so: opt_theta.cpp
-	Rscript --vanilla -e "TMB::compile('opt_theta.cpp', '-O0 -g')"
+# Define all target shared object files
+TMB_TARGETS = fit_theta.$(EXT) opt_theta.$(EXT) fit_theta_beta.$(EXT) opt_theta_beta.$(EXT) opt_beta.$(EXT) \
+              fit_theta_nn.$(EXT) opt_theta_nn.$(EXT) fit_theta_beta_nn.$(EXT) opt_theta_beta_nn.$(EXT) opt_beta_nn.$(EXT)
 
-# Compile fit_theta_beta.cpp into fit_theta_beta.so
-fit_theta_beta.so: fit_theta_beta.cpp
-	Rscript --vanilla -e "TMB::compile('fit_theta_beta.cpp', '-O0 -g')"
+# Default target: compile all shared objects
+all: $(TMB_TARGETS)
 
-# Compile opt_theta_beta.cpp into opt_theta_beta.so
-opt_theta_beta.so: opt_theta_beta.cpp
-	Rscript --vanilla -e "TMB::compile('opt_theta_beta.cpp', '-O0 -g')"
+# General rule to compile any .cpp file into a shared object
+%.$(EXT): %.cpp
+	Rscript --vanilla -e "TMB::compile('$<', '-O0 -g')"
 
-# Compile opt_beta.cpp into opt_beta.so
-opt_beta.so: opt_beta.cpp
-	Rscript --vanilla -e "TMB::compile('opt_beta.cpp', '-O0 -g')"
-
-# Compile fit_theta_nn.cpp into fit_theta_nn.so
-fit_theta_nn.so: fit_theta_nn.cpp
-	Rscript --vanilla -e "TMB::compile('fit_theta_nn.cpp', '-O0 -g')"
-
-# Compile opt_theta_nn.cpp into opt_theta_nn.so
-opt_theta_nn.so: opt_theta_nn.cpp
-	Rscript --vanilla -e "TMB::compile('opt_theta_nn.cpp', '-O0 -g')"
-
-# Compile fit_theta_beta_nn.cpp into fit_theta_beta_nn.so
-fit_theta_beta_nn.so: fit_theta_beta_nn.cpp
-	Rscript --vanilla -e "TMB::compile('fit_theta_beta_nn.cpp', '-O0 -g')"
-
-# Compile opt_theta_beta_nn.cpp into opt_theta_beta_nn.so
-opt_theta_beta_nn.so: opt_theta_beta_nn.cpp
-	Rscript --vanilla -e "TMB::compile('opt_theta_beta_nn.cpp', '-O0 -g')"
-
-# Compile opt_beta_nn.cpp into opt_beta_nn.so
-opt_beta_nn.so: opt_beta_nn.cpp
-	Rscript --vanilla -e "TMB::compile('opt_beta_nn.cpp', '-O0 -g')"
-
-
-# Clean up generated files
+# Clean up generated shared object and intermediate files
 clean:
-	rm -f *.so *.o
+	rm -f $(TMB_TARGETS) *.o
